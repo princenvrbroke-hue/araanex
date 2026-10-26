@@ -5,17 +5,20 @@ import React, { useEffect, useRef } from 'react';
 interface Point {
   x: number;
   y: number;
-  vx: number;
-  vy: number;
-  life: number;
-  maxLife: number;
+  born: number;
+  /** True when the cursor paused before this point: the line must not bridge the gap */
+  breakBefore: boolean;
 }
 
+const LIFETIME = 650; // ms a thread segment stays visible
+const MAX_POINTS = 60;
+const BREAK_GAP = 120; // ms of stillness that starts a new thread
+
 /**
- * Cursor Light Thread Trail (Surprise #1)
- * Perf-forward rewrite:
- * - RAF loop pauses completely when the trail is empty & idle
- * - glow drawn as layered strokes (far cheaper than per-segment shadowBlur)
+ * Cursor Light Thread Trail
+ * - points are time-aged and drawn as smooth quadratic curves (no jagged polylines)
+ * - stillness breaks the thread, so old points never get linked to new movement
+ * - RAF loop pauses completely when the trail is empty
  * - disabled on touch devices and for reduced-motion users
  */
 export function CursorTrail() {
@@ -49,10 +52,12 @@ export function CursorTrail() {
     window.addEventListener('resize', handleResize);
 
     const points: Point[] = [];
-    const mouse = { x: -100, y: -100, prevX: -100, prevY: -100 };
+    let lastX = 0;
+    let lastY = 0;
+    let lastT = 0;
+    let hasLast = false;
     let running = false;
     let animationFrameId = 0;
-    let stopTimeout: ReturnType<typeof setTimeout>;
 
     const start = () => {
       if (!running) {
@@ -62,54 +67,57 @@ export function CursorTrail() {
     };
 
     const handleMouseMove = (e: MouseEvent) => {
-      mouse.prevX = mouse.x;
-      mouse.prevY = mouse.y;
-      mouse.x = e.clientX;
-      mouse.y = e.clientY;
+      const now = performance.now();
+      const x = e.clientX;
+      const y = e.clientY;
 
-      const dx = mouse.x - mouse.prevX;
-      const dy = mouse.y - mouse.prevY;
-      const dist = Math.hypot(dx, dy);
+      if (hasLast && Math.hypot(x - lastX, y - lastY) < 3) return;
 
-      if (dist > 2 && mouse.prevX > 0) {
-        // Emit thread segment with organic weave oscillation
-        const angle = Math.atan2(dy, dx);
-        const perp = angle + Math.PI / 2;
-        const wobble = Math.sin(Date.now() * 0.015) * 3;
+      const breakBefore = !hasLast || now - lastT > BREAK_GAP;
+      // Light ease toward the pointer keeps the thread silky instead of jittery
+      const px = breakBefore ? x : lastX + (x - lastX) * 0.6;
+      const py = breakBefore ? y : lastY + (y - lastY) * 0.6;
 
-        points.push({
-          x: mouse.x + Math.cos(perp) * wobble,
-          y: mouse.y + Math.sin(perp) * wobble,
-          vx: Math.cos(perp) * (Math.random() - 0.5) * 0.6,
-          vy: Math.sin(perp) * (Math.random() - 0.5) * 0.6,
-          life: 0,
-          maxLife: 35 + Math.random() * 20,
-        });
+      points.push({ x: px, y: py, born: now, breakBefore });
+      if (points.length > MAX_POINTS) points.splice(0, points.length - MAX_POINTS);
 
-        if (points.length > 90) {
-          points.splice(0, points.length - 90);
-        }
-        start();
-      }
-
-      clearTimeout(stopTimeout);
-      stopTimeout = setTimeout(start, 150);
+      lastX = px;
+      lastY = py;
+      lastT = now;
+      hasLast = true;
+      start();
     };
 
     window.addEventListener('mousemove', handleMouseMove, { passive: true });
 
+    const mid = (a: Point, b: Point) => ({ x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 });
+
+    const strokePass = (rgb: string, alphaMax: number, widthAt: (fade: number) => number, now: number) => {
+      for (let i = 1; i < points.length - 1; i++) {
+        const prev = points[i - 1];
+        const cur = points[i];
+        const next = points[i + 1];
+        if (cur.breakBefore || next.breakBefore) continue;
+
+        const fade = 1 - (now - cur.born) / LIFETIME;
+        if (fade <= 0) continue;
+
+        const m0 = mid(prev, cur);
+        const m1 = mid(cur, next);
+        ctx.beginPath();
+        ctx.moveTo(m0.x, m0.y);
+        ctx.quadraticCurveTo(cur.x, cur.y, m1.x, m1.y);
+        ctx.strokeStyle = `rgba(${rgb}, ${fade * alphaMax})`;
+        ctx.lineWidth = widthAt(fade);
+        ctx.stroke();
+      }
+    };
+
     const render = () => {
+      const now = performance.now();
       ctx.clearRect(0, 0, width, height);
 
-      for (let i = points.length - 1; i >= 0; i--) {
-        const p = points[i];
-        p.x += p.vx;
-        p.y += p.vy;
-        p.life++;
-        if (p.life >= p.maxLife) {
-          points.splice(i, 1);
-        }
-      }
+      while (points.length > 0 && now - points[0].born >= LIFETIME) points.shift();
 
       if (points.length > 2) {
         ctx.save();
@@ -117,34 +125,22 @@ export function CursorTrail() {
         ctx.lineJoin = 'round';
         ctx.globalCompositeOperation = 'lighter';
 
-        // Pass 1: soft glow strokes (replaces costly shadowBlur)
-        for (let i = 1; i < points.length; i++) {
-          const p0 = points[i - 1];
-          const p1 = points[i];
-          const progress = p1.life / p1.maxLife;
-          const alpha = Math.max(0, 1 - progress);
+        // Wide soft halo, mid glow, thin bright core (cheap layered glow, no shadowBlur)
+        strokePass('60, 140, 255', 0.12, (f) => 2 + f * 9, now);
+        strokePass('90, 169, 255', 0.3, (f) => 1 + f * 4, now);
+        strokePass('225, 240, 255', 0.9, (f) => 0.5 + f * 1.4, now);
 
+        // Glowing head at the newest point
+        const head = points[points.length - 1];
+        const headFade = 1 - (now - head.born) / LIFETIME;
+        if (headFade > 0) {
+          const g = ctx.createRadialGradient(head.x, head.y, 0, head.x, head.y, 14);
+          g.addColorStop(0, `rgba(210, 232, 255, ${0.7 * headFade})`);
+          g.addColorStop(1, 'rgba(90, 169, 255, 0)');
+          ctx.fillStyle = g;
           ctx.beginPath();
-          ctx.moveTo(p0.x, p0.y);
-          ctx.lineTo(p1.x, p1.y);
-          ctx.strokeStyle = `rgba(0, 229, 199, ${alpha * 0.22})`;
-          ctx.lineWidth = Math.max(1, (1 - progress) * 6);
-          ctx.stroke();
-        }
-
-        // Pass 2: bright core strand
-        for (let i = 1; i < points.length; i++) {
-          const p0 = points[i - 1];
-          const p1 = points[i];
-          const progress = p1.life / p1.maxLife;
-          const alpha = Math.max(0, 1 - progress);
-
-          ctx.beginPath();
-          ctx.moveTo(p0.x, p0.y);
-          ctx.lineTo(p1.x, p1.y);
-          ctx.strokeStyle = `rgba(240, 239, 234, ${alpha * 0.85})`;
-          ctx.lineWidth = Math.max(0.4, (1 - progress) * 1.4);
-          ctx.stroke();
+          ctx.arc(head.x, head.y, 14, 0, Math.PI * 2);
+          ctx.fill();
         }
 
         ctx.restore();
@@ -153,7 +149,6 @@ export function CursorTrail() {
       if (points.length > 0) {
         animationFrameId = requestAnimationFrame(render);
       } else {
-        // Fully idle: stop consuming CPU/GPU
         running = false;
         ctx.clearRect(0, 0, width, height);
       }
@@ -162,7 +157,6 @@ export function CursorTrail() {
     return () => {
       window.removeEventListener('resize', handleResize);
       window.removeEventListener('mousemove', handleMouseMove);
-      clearTimeout(stopTimeout);
       cancelAnimationFrame(animationFrameId);
     };
   }, []);
