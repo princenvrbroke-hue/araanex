@@ -1,4 +1,4 @@
-export const SITE_URL = 'https://aranex.science';
+export const SITE_URL = 'https://araanex.com';
 
 /** The six chapters of the page, in scroll order. Section ids are `section-${index}`. */
 export const CHAPTERS = [

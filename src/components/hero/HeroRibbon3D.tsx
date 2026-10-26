@@ -5,6 +5,7 @@ import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { Sparkles } from '@react-three/drei';
 import * as THREE from 'three';
 import { createRibbonTexture } from './ribbonTexture';
+import { WebGLBoundary } from '@/components/ui/WebGLBoundary';
 
 /**
  * The hero 3D layer: a transparent R3F canvas laid over the photoreal mannequin
@@ -218,6 +219,7 @@ export default function HeroRibbon3D({
   reducedMotion: boolean;
 }) {
   return (
+    <WebGLBoundary>
     <Canvas
       frameloop={reducedMotion ? 'demand' : 'always'}
       dpr={[1, 1.75]}
@@ -229,5 +231,6 @@ export default function HeroRibbon3D({
       <directionalLight position={[3, 4, 6]} intensity={1.1} color="#a8caff" />
       <RibbonLayer parallax={parallaxRef ?? STILL} reduced={reducedMotion} />
     </Canvas>
+    </WebGLBoundary>
   );
 }
