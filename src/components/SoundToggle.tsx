@@ -1,44 +1,64 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useSyncExternalStore } from 'react';
 import { Volume2, VolumeX } from 'lucide-react';
 import { sound } from '@/lib/soundEngine';
 
+const STORAGE_KEY = 'aranex_audio_enabled';
+const CHANGE_EVENT = 'aranex-audio-change';
+
+function readStored(): boolean {
+  try {
+    return localStorage.getItem(STORAGE_KEY) === 'true';
+  } catch {
+    // Storage can be unavailable (private mode, blocked site data)
+    return false;
+  }
+}
+
+function subscribe(onChange: () => void) {
+  window.addEventListener(CHANGE_EVENT, onChange);
+  window.addEventListener('storage', onChange);
+  return () => {
+    window.removeEventListener(CHANGE_EVENT, onChange);
+    window.removeEventListener('storage', onChange);
+  };
+}
+
 export function SoundToggle() {
-  const [enabled, setEnabled] = useState(false);
+  const enabled = useSyncExternalStore(subscribe, readStored, () => false);
+
+  useEffect(() => {
+    sound.setEnabled(enabled);
+  }, [enabled]);
 
   const toggleSound = () => {
-    const next = !enabled;
-    setEnabled(next);
-    sound.setEnabled(next);
+    try {
+      localStorage.setItem(STORAGE_KEY, String(!enabled));
+    } catch {
+      // Ignore storage write errors; the toggle just won't persist
+    }
+    window.dispatchEvent(new Event(CHANGE_EVENT));
   };
 
   return (
     <button
+      type="button"
       onClick={toggleSound}
-      className={`group relative flex items-center gap-2 px-3 py-1.5 rounded-full border text-xs font-mono tracking-wider transition-all duration-300 ${
+      aria-pressed={enabled}
+      aria-label="Ambient sound"
+      className={`group relative flex items-center gap-2 px-3 py-1.5 rounded-full border text-xs tracking-wider transition-all duration-300 cursor-pointer ${
         enabled
-          ? 'border-[#00E5C7]/50 bg-[#00E5C7]/10 text-[#00E5C7] shadow-[0_0_12px_rgba(0,229,199,0.25)]'
-          : 'border-white/10 bg-white/5 text-white/50 hover:text-white/80 hover:border-white/20'
+          ? 'border-[#5aa9ff]/60 bg-[#5aa9ff]/15 text-[#8cc4ff] shadow-[0_0_16px_rgba(90,169,255,0.4)]'
+          : 'border-white/10 bg-white/5 text-white/60 hover:text-white/85 hover:border-white/20'
       }`}
-      aria-label={enabled ? 'Disable ambient sound design' : 'Enable ambient sound design'}
-      title={enabled ? 'Sound Design: Active (Procedural Web Audio)' : 'Sound Design: Muted'}
     >
       {enabled ? (
-        <Volume2 className="w-3.5 h-3.5 text-[#00E5C7] animate-pulse" />
+        <Volume2 className="w-3.5 h-3.5 text-[#8cc4ff]" />
       ) : (
-        <VolumeX className="w-3.5 h-3.5 text-white/40 group-hover:text-white/70" />
+        <VolumeX className="w-3.5 h-3.5 text-white/50 group-hover:text-white/75" />
       )}
-      <span className="hidden sm:inline">
-        {enabled ? 'AUDIO ON' : 'AUDIO OFF'}
-      </span>
-      {enabled && (
-        <span className="flex items-center gap-0.5 ml-1">
-          <span className="w-0.5 h-2 bg-[#00E5C7] animate-[pulse_0.8s_ease-in-out_infinite]" />
-          <span className="w-0.5 h-3 bg-[#00E5C7] animate-[pulse_0.6s_ease-in-out_infinite_0.1s]" />
-          <span className="w-0.5 h-1.5 bg-[#00E5C7] animate-[pulse_0.9s_ease-in-out_infinite_0.2s]" />
-        </span>
-      )}
+      <span className="hidden sm:inline">{enabled ? 'Audio on' : 'Audio off'}</span>
     </button>
   );
 }

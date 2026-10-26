@@ -1,32 +1,50 @@
 @import "tailwindcss";
 
 @theme {
-  --color-aranex-dark: #05070A;
-  --color-aranex-graphite: #0D1117;
-  --color-aranex-card: #121820;
-  --color-aranex-border: #1F2937;
-  --color-aranex-bone: #F0EFEA;
-  --color-aranex-muted: #8B949E;
-  --color-aranex-teal: #00E5C7;
-  --color-aranex-amber: #E5A93C;
+  --color-bg-0: #05080f;
+  --color-bg-1: #0a0f1a;
+  --color-bg-2: #0d1422;
+  --color-aranex-line: rgba(160, 190, 255, 0.18);
+  --color-text-0: #ffffff;
+  --color-text-1: #c9d3e6;
+  --color-text-2: #7f8ba3;
+  --color-accent: #5aa9ff;
+  --color-accent-soft: #8cc4ff;
+  --color-accent-deep: #2f6fe0;
+
+  --font-sans: var(--font-inter), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
 :root {
-  --background: #05070A;
-  --foreground: #F0EFEA;
+  --bg-0: #05080f;          /* deepest black-navy */
+  --bg-1: #0a0f1a;          /* page background */
+  --bg-2: #0d1422;          /* cards / panels */
+  --line: rgba(160, 190, 255, 0.18);   /* hairlines, connector lines */
+  --text-0: #ffffff;        /* headings */
+  --text-1: #c9d3e6;        /* body */
+  --text-2: #7f8ba3;        /* captions, labels */
+  --accent: #5aa9ff;        /* primary blue */
+  --accent-soft: #8cc4ff;   /* gradient start */
+  --accent-deep: #2f6fe0;
+  --glow: rgba(70, 150, 255, 0.45);
+  --gradient-cta: linear-gradient(90deg, #8cc4ff 0%, #5aa9ff 100%);
+  --gradient-title: linear-gradient(90deg, #7fa3d6 0%, #9fd0ff 100%); /* 2nd headline line */
+  --radius-pill: 999px;
+
+  --background: var(--bg-1);
+  --foreground: var(--text-0);
 }
 
 html {
-  background-color: #05070A;
-  color: #F0EFEA;
-  scroll-behavior: smooth;
+  background-color: var(--bg-1);
+  color: var(--text-0);
   color-scheme: dark;
 }
 
 body {
-  background-color: #05070A;
-  color: #F0EFEA;
-  font-family: var(--font-geist-sans), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background-color: var(--bg-1);
+  color: var(--text-1);
+  font-family: var(--font-sans);
   overflow-x: hidden;
   margin: 0;
   padding: 0;
@@ -34,9 +52,114 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Editorial Serif font class */
-.font-serif-editorial {
-  font-family: var(--font-newsreader), "Newsreader", "Playfair Display", Georgia, serif;
+::selection {
+  background: var(--accent);
+  color: var(--bg-0);
+}
+
+/* ── Lenis smooth-scroll integration ── */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+/* Typography Utility Classes */
+.text-gradient-title {
+  background-image: var(--gradient-title);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.text-gradient-cta {
+  background-image: var(--gradient-cta);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.bg-gradient-cta {
+  background-image: var(--gradient-cta);
+}
+
+.glow-blue {
+  box-shadow: 0 0 40px var(--glow);
+}
+
+.glow-blue-sm {
+  box-shadow: 0 0 20px rgba(90, 169, 255, 0.3);
+}
+
+/* Section heading scale shared by chapters 02–06 */
+.section-title {
+  font-size: clamp(34px, 2.8vw, 52px);
+  font-weight: 400;
+  letter-spacing: -0.01em;
+  line-height: 1.1;
+  color: #fff;
+}
+
+/* Pill CTAs */
+.btn-pill-primary {
+  height: 44px;
+  padding: 0 28px;
+  border-radius: 999px;
+  background-image: var(--gradient-cta);
+  color: #061021;
+  font-size: 14px;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: box-shadow 0.3s, transform 0.3s;
+}
+.btn-pill-primary:hover {
+  box-shadow: 0 0 35px rgba(90, 169, 255, 0.6);
+  transform: translateY(-2px);
+}
+.btn-pill-secondary {
+  height: 44px;
+  padding: 0 28px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  color: #fff;
+  font-size: 14px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s, border-color 0.3s, transform 0.3s;
+}
+.btn-pill-secondary:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: #fff;
+  transform: translateY(-2px);
+}
+
+@media (max-width: 480px) {
+  .btn-pill-primary,
+  .btn-pill-secondary {
+    padding: 0 20px;
+    font-size: 13px;
+  }
+}
+
+/* Glass panel */
+.glass-panel {
+  background: rgba(13, 20, 34, 0.75);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid var(--line);
 }
 
 /* Subtle cinematic film grain overlay */
@@ -47,8 +170,16 @@ body {
   height: 100vh;
   pointer-events: none;
   z-index: 35;
-  opacity: 0.035;
+  opacity: 0.04;
+  mix-blend-mode: overlay;
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+}
+
+/* Accessible focus states for keyboard users */
+:focus-visible {
+  outline: 2px solid var(--accent-soft);
+  outline-offset: 3px;
+  border-radius: 4px;
 }
 
 /* Custom minimal dark scrollbar */
@@ -56,14 +187,14 @@ body {
   width: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: #05070A;
+  background: var(--bg-0);
 }
 ::-webkit-scrollbar-thumb {
-  background: #1F2937;
+  background: #1c283f;
   border-radius: 3px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #00E5C7;
+  background: var(--accent);
 }
 
 /* Accessibility: reduce motion */

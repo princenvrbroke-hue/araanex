@@ -1,27 +1,20 @@
 import type { Metadata, Viewport } from "next";
-import { Geist, Geist_Mono, Newsreader } from "next/font/google";
+import { Inter } from "next/font/google";
+import { SITE_URL } from "@/content/site";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const inter = Inter({
+  variable: "--font-inter",
   subsets: ["latin"],
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
-
-const newsreader = Newsreader({
-  variable: "--font-newsreader",
-  subsets: ["latin"],
-  style: ["normal", "italic"],
-});
+const description =
+  "Clothing evolved to protect us. Science will empower it to do more. An interactive exploration of biomechanical textile engineering and the future of physiological wearables.";
 
 export const metadata: Metadata = {
+  metadataBase: new URL(SITE_URL),
   title: "ARANEX — Biomechanical Wearable Architecture",
-  description:
-    "Clothing evolved to protect us. Science will empower it to do more. An interactive exploration of biomechanical textile engineering and the future of physiological wearables.",
+  description,
   keywords: [
     "ARANEX",
     "wearable science",
@@ -31,11 +24,11 @@ export const metadata: Metadata = {
     "sensing textiles",
   ],
   authors: [{ name: "ARANEX Research Labs" }],
+  alternates: { canonical: "/" },
   openGraph: {
     title: "ARANEX — Biomechanical Wearable Architecture",
-    description:
-      "Clothing evolved to protect us. Science will empower it to do more. Explore the science, anatomy, and future of wearable textiles.",
-    url: "https://aranex.science",
+    description,
+    url: "/",
     siteName: "ARANEX",
     locale: "en_US",
     type: "website",
@@ -48,7 +41,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#05070A",
+  themeColor: "#05080f",
   width: "device-width",
   initialScale: 1,
 };
@@ -59,13 +52,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html
-      lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} ${newsreader.variable} dark h-full antialiased`}
-    >
-      <body className="min-h-full flex flex-col bg-[#05070A] text-[#F0EFEA] selection:bg-[#00E5C7] selection:text-[#05070A]">
-        {children}
-      </body>
+    <html lang="en" className={`${inter.variable} dark h-full antialiased`}>
+      <body className="min-h-full flex flex-col">{children}</body>
     </html>
   );
 }

@@ -1,124 +1,120 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import Lenis from 'lenis';
-import gsap from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { sound } from '@/lib/soundEngine';
+import { CHAPTERS } from '@/content/site';
 
-if (typeof window !== 'undefined') {
-  gsap.registerPlugin(ScrollTrigger);
-}
-
-export interface ScrollState {
-  progress: number;        // Overall page scroll progress 0 -> 1
-  activeSection: number;   // 0 -> 8
-  velocity: number;        // Scroll speed / inertia for fabric deformation
-  isExhaling: boolean;     // True when reached footer (Surprise #6)
-  lenis: Lenis | null;
-}
-
-// Global store to share scroll progress without heavy re-renders
+/**
+ * Module-level store for HIGH-FREQUENCY scroll data.
+ * Written on every Lenis scroll event, read inside rAF / R3F callbacks —
+ * deliberately NOT React state, so scrolling never triggers a re-render.
+ */
 export const globalScroll = {
-  progress: 0,
-  velocity: 0,
-  activeSection: 0,
-  isExhaling: false,
-  targetSection: 0,
+  progress: 0, //  0 -> 1 overall page scroll
+  velocity: 0, //  scroll speed
 };
 
+let activeLenis: Lenis | null = null;
+
+/** Pause/resume page scrolling (used while a dialog is open). */
+export function setPageScrollLocked(locked: boolean) {
+  if (activeLenis) {
+    if (locked) activeLenis.stop();
+    else activeLenis.start();
+  } else {
+    document.documentElement.style.overflow = locked ? 'hidden' : '';
+  }
+}
+
 export function useScrollProgress() {
-  const [scrollState, setScrollState] = useState<ScrollState>({
-    progress: 0,
-    activeSection: 0,
-    velocity: 0,
-    isExhaling: false,
-    lenis: null,
-  });
+  const [activeSection, setActiveSection] = useState(0);
+  const lenisRef = useRef<Lenis | null>(null);
+  const reducedRef = useRef(false);
 
   useEffect(() => {
-    // Initialize Lenis smooth scroll
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    reducedRef.current = reduced;
+
     const lenis = new Lenis({
       duration: 1.4,
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
       orientation: 'vertical',
       gestureOrientation: 'vertical',
-      smoothWheel: true,
+      smoothWheel: !reduced,
       wheelMultiplier: 1.0,
       touchMultiplier: 1.5,
     });
+    lenisRef.current = lenis;
+    activeLenis = lenis;
 
     lenis.on('scroll', (e: { progress: number; velocity: number }) => {
-      ScrollTrigger.update();
-      const prog = Math.max(0, Math.min(1, e.progress || 0));
-      const vel = Math.abs(e.velocity || 0);
-
-      globalScroll.progress = prog;
-      globalScroll.velocity = vel;
-
-      // Section calculation (8 chapters + hero: 0 to 8)
-      const rawSec = Math.floor(prog * 8.99);
-      globalScroll.activeSection = rawSec;
-
-      // Check footer exhale trigger (> 0.985)
-      const isEnd = prog > 0.982;
-      if (isEnd && !globalScroll.isExhaling) {
-        globalScroll.isExhaling = true;
-        sound.playExhale();
-      } else if (!isEnd && globalScroll.isExhaling) {
-        globalScroll.isExhaling = false;
-      }
-
-      // Subtle fabric rustle during fast scrolls
-      if (vel > 4.5 && Math.random() < 0.08) {
-        sound.playFabricRustle(0.2, 0.06);
-      }
-
-      setScrollState((prev) => ({
-        ...prev,
-        progress: prog,
-        activeSection: rawSec,
-        velocity: vel,
-        isExhaling: globalScroll.isExhaling,
-      }));
+      globalScroll.progress = Math.max(0, Math.min(1, e.progress || 0));
+      globalScroll.velocity = Math.abs(e.velocity || 0);
     });
 
-    function updateRaf(time: number) {
+    let rafId = 0;
+    const raf = (time: number) => {
       lenis.raf(time);
-      requestAnimationFrame(updateRaf);
+      rafId = requestAnimationFrame(raf);
+    };
+    rafId = requestAnimationFrame(raf);
+
+    // Active chapter = the section crossing the middle of the viewport.
+    // Sections have very different heights (the hero is pinned for ~3
+    // screens), so this is measured from the DOM, not from overall progress.
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            const idx = Number(entry.target.id.replace('section-', ''));
+            if (!Number.isNaN(idx)) setActiveSection(idx);
+          }
+        }
+      },
+      { rootMargin: '-50% 0px -50% 0px' }
+    );
+    for (const ch of CHAPTERS) {
+      const el = document.getElementById(`section-${ch.index}`);
+      if (el) io.observe(el);
     }
-    const rafId = requestAnimationFrame(updateRaf);
 
-    // Synchronize Lenis with GSAP ScrollTrigger
-    gsap.ticker.add((time) => {
-      lenis.raf(time * 1000);
-    });
-    gsap.ticker.lagSmoothing(0);
-
-    setScrollState((prev) => ({ ...prev, lenis }));
+    // Dev-only deep link for screenshots: ?sec=N
+    let deepLinkTimer: number | undefined;
+    if (process.env.NODE_ENV !== 'production') {
+      const sec = Number.parseInt(new URLSearchParams(window.location.search).get('sec') ?? '', 10);
+      if (!Number.isNaN(sec)) {
+        deepLinkTimer = window.setTimeout(() => {
+          const el = document.getElementById(`section-${sec}`);
+          if (el) lenis.scrollTo(el, { immediate: true });
+        }, 80);
+      }
+    }
 
     return () => {
+      window.clearTimeout(deepLinkTimer);
+      io.disconnect();
       cancelAnimationFrame(rafId);
       lenis.destroy();
-      ScrollTrigger.getAll().forEach((t) => t.kill());
+      lenisRef.current = null;
+      activeLenis = null;
     };
   }, []);
 
-  const scrollToSection = (sectionIndex: number) => {
-    if (!scrollState.lenis) {
-      const el = document.getElementById(`section-${sectionIndex}`);
-      el?.scrollIntoView({ behavior: 'smooth' });
-      return;
-    }
+  const scrollToSection = useCallback((sectionIndex: number) => {
     const el = document.getElementById(`section-${sectionIndex}`);
-    if (el) {
-      sound.playTick(600, 0.03);
-      scrollState.lenis.scrollTo(el, { offset: 0, duration: 1.6 });
+    if (!el) return;
+    sound.playTick(600, 0.03);
+    const lenis = lenisRef.current;
+    const immediate = reducedRef.current;
+    if (lenis) {
+      lenis.scrollTo(el, { duration: 1.6, immediate });
+    } else {
+      el.scrollIntoView({ behavior: immediate ? 'instant' : 'smooth' });
     }
-  };
+    // Move keyboard focus with the scroll so Tab continues from the chapter
+    el.focus({ preventScroll: true });
+  }, []);
 
-  return {
-    ...scrollState,
-    scrollToSection,
-  };
+  return { activeSection, scrollToSection };
 }
