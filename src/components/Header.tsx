@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useRef, useState } from 'react';
+import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { SoundToggle } from './SoundToggle';
 import { Dialog } from './ui/Dialog';
@@ -76,9 +77,15 @@ export function Header({ activeSection, onSelectSection, onOpenResearch, onSecre
             className="text-left cursor-pointer"
             aria-label="ARAANEX, back to top"
           >
-            <span className="text-[24px] md:text-[28px] font-normal tracking-[0.4em] text-white uppercase select-none transition-opacity duration-300 hover:opacity-85">
-              ARAANEX
-            </span>
+            <Image
+              src="/logo.svg"
+              alt=""
+              width={191}
+              height={39.5}
+              unoptimized
+              priority
+              className="h-8 md:h-10 w-auto select-none transition-opacity duration-300 hover:opacity-85"
+            />
           </button>
 
           <nav aria-label="Main" className="hidden xl:block">
@@ -135,7 +142,7 @@ export function Header({ activeSection, onSelectSection, onOpenResearch, onSecre
         isOpen={menuOpen}
         onClose={() => setMenuOpen(false)}
         title="Menu"
-        heading={<span className="tracking-[0.4em] uppercase">ARAANEX</span>}
+        heading={<Image src="/logo.svg" alt="ARAANEX" width={191} height={39.5} unoptimized className="h-10 w-auto" />}
         fullscreen
         className="p-8 md:p-14 flex flex-col"
       >
