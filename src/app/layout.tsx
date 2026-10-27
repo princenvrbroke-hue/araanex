@@ -13,29 +13,29 @@ const description =
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
-  title: "ARANEX — Biodesign Wearable Architecture",
+  title: "ARAANEX — Biodesign Wearable Architecture",
   description,
   keywords: [
-    "ARANEX",
+    "ARAANEX",
     "wearable science",
     "biomechanical clothing",
     "textile engineering",
     "anatomical design",
     "sensing textiles",
   ],
-  authors: [{ name: "ARANEX Research Labs" }],
+  authors: [{ name: "ARAANEX Research Labs" }],
   alternates: { canonical: "/" },
   openGraph: {
-    title: "ARANEX — Biodesign Wearable Architecture",
+    title: "ARAANEX — Biodesign Wearable Architecture",
     description,
     url: "/",
-    siteName: "ARANEX",
+    siteName: "ARAANEX",
     locale: "en_US",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "ARANEX — Biodesign Wearable Architecture",
+    title: "ARAANEX — Biodesign Wearable Architecture",
     description: "Clothing evolved to protect us. Science will empower it to do more.",
   },
 };

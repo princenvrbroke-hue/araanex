@@ -61,7 +61,7 @@ export function Hero({ onExploreScience, onFutureVision }: HeroProps) {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6 }}
             >
-              <Eyebrow prefix="ARANEX /" text="THE SCIENCE OF WEARABLES" />
+              <Eyebrow prefix="ARAANEX /" text="THE SCIENCE OF WEARABLES" />
             </motion.div>
 
             <motion.h1

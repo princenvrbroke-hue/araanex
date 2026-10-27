@@ -77,7 +77,7 @@ export const ARANEX_CONTENT = {
     badge: "BIODESIGN WEARABLE ARCHITECTURE",
     headline: "For centuries, we have worn clothes. It's time our clothes did more for us.",
     subhead: "Clothing Evolved to Protect Us. Science Will Empower It to Do More.",
-    narrative: "Conventional garments treat the human body as a uniform cylinder. ARANEX rejects decorative stagnation, re-engineering the relationship between textile physics, anatomical stress, and thermoregulatory biology.",
+    narrative: "Conventional garments treat the human body as a uniform cylinder. ARAANEX rejects decorative stagnation, re-engineering the relationship between textile physics, anatomical stress, and thermoregulatory biology.",
     ctaPrimary: "Explore the Science",
     ctaSecondary: "Our Future Vision",
   },
@@ -89,7 +89,7 @@ export const ARANEX_CONTENT = {
       color: "border-emerald-500/30 text-emerald-300 bg-emerald-950/20",
     },
     designIntent: {
-      text: "ARANEX design intent",
+      text: "ARAANEX design intent",
       description: "Engineered functional architecture targeting specific kinematic needs",
       color: "border-cyan-500/30 text-cyan-300 bg-cyan-950/20",
     },
@@ -333,9 +333,9 @@ export const ARANEX_CONTENT = {
 
   section05_aranex: {
     chapter: "05",
-    tag: "THE ARANEX APPROACH",
+    tag: "THE ARAANEX APPROACH",
     title: "Engineered Around Anatomy.",
-    lead: "Rather than tailoring flat woven sheets around a generic dummy, ARANEX garments are computationally calculated in 3D around human biological stress maps.",
+    lead: "Rather than tailoring flat woven sheets around a generic dummy, ARAANEX garments are computationally calculated in 3D around human biological stress maps.",
     evidenceLevel: "designIntent" as const,
     layers: [
       {
@@ -553,7 +553,7 @@ export const ARANEX_CONTENT = {
     cta: {
       primary: "Explore Products",
       secondary: "Join the Research Journey",
-      disclaimer: "ARANEX products are engineered to optimize mechanical comfort, thermoregulation, and kinematic support. They are not medical devices and are not intended to diagnose, treat, cure, or prevent any illness or disease.",
+      disclaimer: "ARAANEX products are engineered to optimize mechanical comfort, thermoregulation, and kinematic support. They are not medical devices and are not intended to diagnose, treat, cure, or prevent any illness or disease.",
     },
   },
 };

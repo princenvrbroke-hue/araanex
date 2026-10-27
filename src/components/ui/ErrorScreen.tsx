@@ -37,7 +37,7 @@ export function ErrorScreen({ code, title, message, children }: ErrorScreenProps
         }}
       >
         <p style={{ margin: 0, fontSize: 12, letterSpacing: '0.28em', color: '#5aa9ff' }}>
-          ARANEX · {code}
+          ARAANEX · {code}
         </p>
         <h1 style={{ margin: '16px 0 0', fontSize: 30, fontWeight: 400, letterSpacing: '-0.01em' }}>
           {title}

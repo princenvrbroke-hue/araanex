@@ -89,7 +89,7 @@ export function Vision({ onOpenResearch }: VisionProps) {
 
       <footer className="relative z-10 max-w-[1536px] w-full mx-auto px-6 md:px-12 xl:pl-[104px] pt-6 border-t border-[rgba(160,190,255,0.12)] flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-[#7f8ba3]">
         <div className="flex items-center gap-3">
-          <span className="tracking-[0.3em] font-normal text-white uppercase text-[13px]">ARANEX</span>
+          <span className="tracking-[0.3em] font-normal text-white uppercase text-[13px]">ARAANEX</span>
           <span aria-hidden="true">•</span>
           <span>THE SCIENCE OF WEARABLES</span>
         </div>
@@ -100,7 +100,7 @@ export function Vision({ onOpenResearch }: VisionProps) {
         >
           Scientific Whitepapers
         </button>
-        <span>&copy; 2026 ARANEX LABS INC. ALL RIGHTS RESERVED.</span>
+        <span>&copy; 2026 ARAANEX LABS INC. ALL RIGHTS RESERVED.</span>
       </footer>
     </section>
   );

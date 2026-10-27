@@ -6,7 +6,7 @@ import React, { useEffect, useRef } from 'react';
  * HeroScrollSequence — scroll-linked image sequence (frame-scrub) rendered on
  * a <canvas> that exactly fills the hero's right-column stage box.
  *
- * - 213 pre-rendered orbit frames of the ARANEX mannequin + energy ribbon,
+ * - 213 pre-rendered orbit frames of the ARAANEX mannequin + energy ribbon,
  *   shot on the same #05080f/#0a0f1a dark-navy backdrop as the site background,
  *   so the sequence blends into the page with no visible seam.
  * - The canvas is CONFINED TO THE STAGE BOX (never full-viewport): the

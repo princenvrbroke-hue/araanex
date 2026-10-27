@@ -49,7 +49,7 @@ const ERAS: EraData[] = [
     title: 'INTELLIGENCE',
     tagline: 'Monitor. Adapt. Support your health.',
     description:
-      'ARANEX embeds bio-conductive yarns and phase-change thermal matrices directly into the structural weave. Clothing that senses heart rate, muscular fatigue, and core thermals to dynamically adapt in real time.',
+      'ARAANEX embeds bio-conductive yarns and phase-change thermal matrices directly into the structural weave. Clothing that senses heart rate, muscular fatigue, and core thermals to dynamically adapt in real time.',
     specs: ['Sub-second biometric sensing', 'Active thermoregulatory airflow', 'Kinetic posture feedback'],
     image: '/img/hologram.webp',
     alt: 'A translucent figure wearing a garment traced with sensor lines',

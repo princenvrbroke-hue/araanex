@@ -2,7 +2,7 @@ import Link from 'next/link';
 import type { Metadata } from 'next';
 import { ErrorScreen, primaryBtn } from '@/components/ui/ErrorScreen';
 
-export const metadata: Metadata = { title: 'Not found — ARANEX' };
+export const metadata: Metadata = { title: 'Not found — ARAANEX' };
 
 export default function NotFound() {
   return (

@@ -74,10 +74,10 @@ export function Header({ activeSection, onSelectSection, onOpenResearch, onSecre
             type="button"
             onClick={handleLogo}
             className="text-left cursor-pointer"
-            aria-label="ARANEX, back to top"
+            aria-label="ARAANEX, back to top"
           >
             <span className="text-[24px] md:text-[28px] font-normal tracking-[0.4em] text-white uppercase select-none transition-opacity duration-300 hover:opacity-85">
-              ARANEX
+              ARAANEX
             </span>
           </button>
 
@@ -135,7 +135,7 @@ export function Header({ activeSection, onSelectSection, onOpenResearch, onSecre
         isOpen={menuOpen}
         onClose={() => setMenuOpen(false)}
         title="Menu"
-        heading={<span className="tracking-[0.4em] uppercase">ARANEX</span>}
+        heading={<span className="tracking-[0.4em] uppercase">ARAANEX</span>}
         fullscreen
         className="p-8 md:p-14 flex flex-col"
       >
@@ -164,7 +164,7 @@ export function Header({ activeSection, onSelectSection, onOpenResearch, onSecre
           </ul>
         </nav>
         <div className="pt-6 border-t border-[rgba(160,190,255,0.18)] flex items-center justify-between text-xs text-[#7f8ba3]">
-          <span>© ARANEX Biodesign Wearables</span>
+          <span>© ARAANEX Biodesign Wearables</span>
           <span>The Science of Wearables</span>
         </div>
       </Dialog>

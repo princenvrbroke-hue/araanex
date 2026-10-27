@@ -17,7 +17,7 @@ export function EasterEggModal({ isOpen, onClose }: EasterEggModalProps) {
     <Dialog
       isOpen={isOpen}
       onClose={onClose}
-      title="ARANEX Kinematic Wireframe"
+      title="ARAANEX Kinematic Wireframe"
       eyebrow={<Eyebrow text="YOU FOUND IT" />}
       className="max-w-4xl p-6 md:p-8"
     >

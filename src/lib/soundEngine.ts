@@ -1,4 +1,4 @@
-// Web Audio API procedural sound engine for ARANEX
+// Web Audio API procedural sound engine for ARAANEX
 // Generates soft fabric swish, harmonic hums, data pulses, and tactile ticks without external audio files
 
 class SoundEngine {
