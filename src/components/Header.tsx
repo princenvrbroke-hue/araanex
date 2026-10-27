@@ -164,7 +164,7 @@ export function Header({ activeSection, onSelectSection, onOpenResearch, onSecre
           </ul>
         </nav>
         <div className="pt-6 border-t border-[rgba(160,190,255,0.18)] flex items-center justify-between text-xs text-[#7f8ba3]">
-          <span>© ARANEX Biomechanical Wearables</span>
+          <span>© ARANEX Biodesign Wearables</span>
           <span>The Science of Wearables</span>
         </div>
       </Dialog>

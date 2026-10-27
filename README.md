@@ -1,8 +1,8 @@
-# ARANEX — Biomechanical Wearable Architecture
+# ARANEX — Biodesign Wearable Architecture
 
 > *"Clothing Evolved to Protect Us. Science Will Empower It to Do More."*
 
-ARANEX is a scroll-driven, 3D, story-led interactive documentary and future-tech product reveal for an advanced biomechanical wearables brand. It replaces conventional fashion e-commerce tropes with scientific inquiry, anatomical stress mapping, and interactive 3D simulations.
+ARANEX is a scroll-driven, 3D, story-led interactive documentary and future-tech product reveal for an advanced biodesign wearables brand. It replaces conventional fashion e-commerce tropes with scientific inquiry, anatomical stress mapping, and interactive 3D simulations.
 
 ---
 

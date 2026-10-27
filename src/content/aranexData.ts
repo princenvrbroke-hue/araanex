@@ -74,7 +74,7 @@ export interface ConstellationNode {
 
 export const ARANEX_CONTENT = {
   hero: {
-    badge: "BIOMECHANICAL WEARABLE ARCHITECTURE",
+    badge: "BIODESIGN WEARABLE ARCHITECTURE",
     headline: "For centuries, we have worn clothes. It's time our clothes did more for us.",
     subhead: "Clothing Evolved to Protect Us. Science Will Empower It to Do More.",
     narrative: "Conventional garments treat the human body as a uniform cylinder. ARANEX rejects decorative stagnation, re-engineering the relationship between textile physics, anatomical stress, and thermoregulatory biology.",
