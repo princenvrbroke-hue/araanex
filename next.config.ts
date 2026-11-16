@@ -38,6 +38,7 @@ const securityHeaders = [
 
 const nextConfig: NextConfig = {
   cacheComponents: true,
+  experimental: { agentUpgrade: "security" },
   // Hide the dev overlay route indicator (e.g. "Cache disabled" pill)
   devIndicators: false,
   partialPrefetching: true,
