@@ -1,0 +1,13 @@
+# ARAANEX
+
+> ARAANEX is a biodesign wearables brand: anatomy-mapped smart clothing built on biomechanical textile engineering, 3D knitting and sensing fabrics.
+
+ARAANEX's site is a single scroll-driven story about why clothing should be engineered around the human body.
+
+## Sections
+- [Our story](https://araanex.com/#section-0): Clothing evolved to protect us. Science will empower it to do more.
+- [Evolution](https://araanex.com/#section-1): How clothing's function changed from armour to performance wear.
+- [Anatomy](https://araanex.com/#section-2): Pressure, friction and heat across the body's zones.
+- [Materials](https://araanex.com/#section-3): The layered fabric architecture: outer matrix, cushioning, compression, moisture channels.
+- [Sensing](https://araanex.com/#section-4): Conductive yarn and physiological sensing textiles.
+- [Vision](https://araanex.com/#section-5): Research roadmap and clinical partnerships.

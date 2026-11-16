@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
-import { SITE_URL } from "@/content/site";
+import { CHAPTERS, SITE_URL } from "@/content/site";
 import "./globals.css";
 
 const inter = Inter({
@@ -9,24 +9,78 @@ const inter = Inter({
 });
 
 const description =
-  "Clothing evolved to protect us. Science will empower it to do more. An interactive exploration of biomechanical textile engineering and the future of physiological wearables.";
+  "ARAANEX designs anatomy-mapped smart clothing: biomechanical textile engineering, 3D-knitted performance wear and sensing fabrics for the future of physiological wearables.";
+
+const title = "ARAANEX | Biodesign Wearables, Smart Textiles & Anatomical Clothing";
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": `${SITE_URL}/#organization`,
+      name: "ARAANEX",
+      alternateName: "ARAANEX Research Labs",
+      url: SITE_URL,
+      logo: `${SITE_URL}/logo.svg`,
+      description,
+    },
+    {
+      "@type": "WebSite",
+      "@id": `${SITE_URL}/#website`,
+      url: SITE_URL,
+      name: "ARAANEX",
+      description,
+      inLanguage: "en",
+      publisher: { "@id": `${SITE_URL}/#organization` },
+    },
+    {
+      "@type": "WebPage",
+      "@id": `${SITE_URL}/#webpage`,
+      url: SITE_URL,
+      name: title,
+      isPartOf: { "@id": `${SITE_URL}/#website` },
+      about: { "@id": `${SITE_URL}/#organization` },
+      primaryImageOfPage: `${SITE_URL}/opengraph-image.jpg`,
+      hasPart: CHAPTERS.map((c) => ({
+        "@type": "WebPageElement",
+        name: c.name,
+        url: `${SITE_URL}/#section-${c.index}`,
+      })),
+    },
+  ],
+};
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
-  title: "ARAANEX — Biodesign Wearable Architecture",
+  title: { default: title, template: "%s | ARAANEX" },
   description,
+  applicationName: "ARAANEX",
+  formatDetection: { telephone: false, email: false, address: false },
+  category: "technology",
   keywords: [
     "ARAANEX",
-    "wearable science",
+    "smart clothing",
+    "smart textiles",
+    "wearable technology",
+    "biodesign wearables",
     "biomechanical clothing",
-    "textile engineering",
-    "anatomical design",
+    "anatomical clothing",
+    "performance wear",
+    "3D knitting",
     "sensing textiles",
+    "physiological wearables",
+    "textile engineering",
   ],
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1, "max-video-preview": -1 },
+  },
   authors: [{ name: "ARAANEX Research Labs" }],
   alternates: { canonical: "/" },
   openGraph: {
-    title: "ARAANEX — Biodesign Wearable Architecture",
+    title,
     description,
     url: "/",
     siteName: "ARAANEX",
@@ -35,8 +89,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "ARAANEX — Biodesign Wearable Architecture",
-    description: "Clothing evolved to protect us. Science will empower it to do more.",
+    title,
+    description,
   },
 };
 
@@ -53,7 +107,13 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={`${inter.variable} dark h-full antialiased`}>
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full flex flex-col">
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c") }}
+        />
+        {children}
+      </body>
     </html>
   );
 }
