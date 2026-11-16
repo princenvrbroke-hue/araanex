@@ -222,13 +222,15 @@ function BodyScanHud() {
       {Array.from({ length: 24 }, (_, i) => {
         const a = (i / 24) * Math.PI * 2;
         const r1 = i % 6 === 0 ? 48 : 51;
+        // Round so server and client trig produce identical strings (avoids hydration mismatch)
+        const pt = (r: number, f: (n: number) => number) => Number((60 + f(a) * r).toFixed(3));
         return (
           <line
             key={i}
-            x1={60 + Math.cos(a) * r1}
-            y1={60 + Math.sin(a) * r1}
-            x2={60 + Math.cos(a) * 54}
-            y2={60 + Math.sin(a) * 54}
+            x1={pt(r1, Math.cos)}
+            y1={pt(r1, Math.sin)}
+            x2={pt(54, Math.cos)}
+            y2={pt(54, Math.sin)}
             stroke="rgba(140,196,255,0.5)"
             strokeWidth="0.8"
           />
